@@ -1,0 +1,261 @@
+# This file contains common pin mappings for Tenlog boards.  To use
+# this config, the firmware should be compiled for the AVR atmega2560.
+
+# See the example.cfg file for a description of available parameters.
+
+
+[mcu]
+baud: 250000
+serial: /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0
+pin_map: arduino
+
+[resonance_inducer]
+probe_points: 110,110,30
+
+
+
+[printer]
+kinematics: cartesian
+max_velocity: 200
+max_accel: 7000
+#max_accel: 7000
+max_accel_to_decel: 7000
+
+max_z_velocity: 20
+max_z_accel: 60
+
+[bed_screws]
+screw1: 25,35
+screw2: 25,185
+screw3: 195,185
+screw4:	195,35
+
+[stepper_x]
+step_pin: ar54
+dir_pin: ar55
+enable_pin: !ar38
+rotation_distance: 40
+microsteps: 16
+endstop_pin: ^!ar3
+position_endstop: -48
+position_max: 220
+position_min: -50
+homing_speed: 40
+homing_positive_dir: false
+
+# Definition for the secondary carriage and extruder1
+[dual_carriage]
+axis: x
+step_pin: ar36
+dir_pin: ar34
+enable_pin: !ar30
+rotation_distance: 40
+microsteps: 16
+endstop_pin: ^!ar2
+position_endstop: 265
+position_min: 0
+position_max: 265
+homing_speed: 40
+
+[stepper_y]
+step_pin: ar60
+dir_pin: !ar61
+enable_pin: !ar56
+rotation_distance: 40
+microsteps: 16
+endstop_pin: ^!ar14
+position_endstop: 0
+position_max: 220
+homing_speed: 30
+
+[stepper_z]
+step_pin: ar46
+dir_pin: ar48
+enable_pin: !ar62
+microsteps: 16
+rotation_distance: 4
+endstop_pin: ^!ar18
+position_max: 250
+position_min: -0.2
+
+[stepper_z1]
+step_pin: ar65
+dir_pin: ar66
+enable_pin: !ar64
+microsteps: 16
+rotation_distance: 4
+endstop_pin: ^!ar19
+
+
+# The definition for the primary extruder
+[extruder]
+step_pin: ar57
+dir_pin: !ar58
+enable_pin: !ar59
+microsteps: 16
+gear_ratio: 4:1
+rotation_distance: 30
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: ar11
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: analog15
+pressure_advance = 0.1
+min_temp: 0
+max_temp: 260
+
+
+
+[extruder1]
+step_pin: ar26
+dir_pin: !ar28
+enable_pin: !ar24
+microsteps: 16
+gear_ratio: 4:1
+rotation_distance: 30
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: ar10
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: analog13
+pressure_advance = 0.1
+min_temp: 0	
+max_temp: 260
+
+
+[heater_bed]
+heater_pin: ar8
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: analog14
+min_temp: 0
+max_temp: 110
+
+[fan]
+pin: ar9
+max_power: 1.0
+shutdown_speed: 0
+cycle_time: 0.010
+hardware_pwm: False
+kick_start_time: 0.100
+off_below: 0.0
+
+[heater_fan fan]
+pin: ar5
+heater: extruder,extruder1
+heater_temp: 80.0
+fan_speed: 1.0
+
+
+[virtual_sdcard]
+path: /home/pi/sdcard
+
+[input_shaper]
+shaper_freq_x: 36  # frequency for the X mark of the test model
+shaper_freq_y: 34  # frequency for the Y mark of the test model
+
+#[smooth_axis]
+#smooth_x = 0.045
+#smooth_y = 0.036
+
+
+# Helper script to park the carriage (called from T0 and T1 macros)
+[gcode_macro PARK_extruder]
+gcode:
+    SAVE_GCODE_STATE NAME=park0
+    G21
+    G90
+    G1 X-48 F3000
+    RESTORE_GCODE_STATE NAME=park0
+
+[gcode_macro PARK_extruder1]
+gcode:
+    SAVE_GCODE_STATE NAME=park1
+    G21
+    G90
+    G1 X265 F3000
+    RESTORE_GCODE_STATE NAME=park1
+
+# Activate the primary extruder
+[gcode_macro T0]
+gcode:
+    PARK_{printer.toolhead.extruder}
+    ACTIVATE_EXTRUDER EXTRUDER=extruder
+    SET_DUAL_CARRIAGE CARRIAGE=0
+    SET_GCODE_OFFSET Y=0 X=0
+
+[gcode_macro T1]
+gcode:
+    PARK_{printer.toolhead.extruder}
+    ACTIVATE_EXTRUDER EXTRUDER=extruder1
+    SET_DUAL_CARRIAGE CARRIAGE=1
+    SET_GCODE_OFFSET X=-1.45 Y=1.55
+
+[gcode_macro START_PRINT]
+gcode:
+    {% set BED_TEMP = params.BED_TEMP|default(60)|float %}
+    {% set EXTRUDER_TEMP = params.EXTRUDER_TEMP|default(190)|float %}
+    # Start bed heating
+    M140 S{BED_TEMP}
+	# Start extruder heating
+    M104 S{EXTRUDER_TEMP}
+    # Use absolute coordinates
+    G90
+	#reset E
+	G92 E0
+	#Set extruder to relative mode
+	M82
+    # Reset the G-Code Z offset (adjust Z offset if needed)
+    #SET_GCODE_OFFSET Z=0.08
+    # Home the printer
+    G28
+    # Move the nozzle near the bed
+    G1 X2 Y50 Z5 F3000
+    # Move the nozzle very close to the bed
+    G1 Z0.3 F300
+   	# Wait for bed to reach temperature
+    M190 S{BED_TEMP}
+    # Set and wait for nozzle to reach temperature
+    M109 S{EXTRUDER_TEMP}
+	#Prime
+	G0 X-50 F3000
+	G1 E3 F300
+	#Wipe
+	
+[gcode_macro END_PRINT]
+gcode:
+    M117 End printing.
+    G91 ; relative positioning
+    G1 E-1 F300 ;retract the filament a bit before lifting the nozzle to release some of the pressure
+    G1 Z+5 E-2 F1000 ;move Z up a bit and extract a bit more
+    T1
+	T0
+    G90 ; absolute positioning
+ 	G0 Y220 F3000 ; make the printed object accessible
+    m104 S0 ; turn hotend heating off
+    M140 S0 ; turn bed heating off
+    M107 ; turn fan off
+    M84 ; steppers off
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 20.738
+#*# pid_ki = 1.106
+#*# pid_kd = 97.207
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 66.306
+#*# pid_ki = 0.781
+#*# pid_kd = 1407.349
+#*#
+#*# [extruder1]
+#*# control = pid
+#*# pid_kp = 24.794
+#*# pid_ki = 1.531
+#*# pid_kd = 100.417
+#*#
+#*# [stepper_z]
+#*# position_endstop = -0.099
