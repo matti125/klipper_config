@@ -5,17 +5,33 @@ dir_pin: !ar58
 enable_pin: !ar59
 microsteps: 16
 gear_ratio: 4:1
-rotation_distance: 30
+rotation_distance: 31.6
 nozzle_diameter: 0.400
 filament_diameter: 1.750
 heater_pin: ar11
 sensor_type: EPCOS 100K B57560G104F
 sensor_pin: analog15
-pressure_advance = 0.1
+pressure_advance = 0.065
 min_temp: 0
 max_temp: 260
 max_extrude_only_distance: 200.0
 max_extrude_cross_section: 3
+
+
+[stepper_x]
+position_endstop: -45
+position_min: -46
+position_max: 220
+
+#Use endstop -62 for dual heads. Printing will need to start
+#at position 17mm from standard left side, as otherwise the righ
+#extruder will collide with the parked left extruder.
+
+[stepper_x_disabled_for_now]
+position_endstop: -62
+position_max: 203
+position_min: -63
+
 
 [input_shaper]
 shaper_freq_x: 35  # frequency for the X mark of the test model
