@@ -27,10 +27,9 @@ position_max: 220
 #at position 17mm from standard left side, as otherwise the righ
 #extruder will collide with the parked left extruder.
 
-[stepper_x_disabled_for_now]
-position_endstop: -62
-position_max: 203
-position_min: -63
+#position_endstop: -62
+#position_max: 203
+#position_min: -63
 
 
 [input_shaper]
