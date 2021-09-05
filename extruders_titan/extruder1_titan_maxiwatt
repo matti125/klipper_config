@@ -11,7 +11,7 @@ filament_diameter: 1.750
 heater_pin: ar10
 sensor_type: EPCOS 100K B57560G104F
 sensor_pin: analog13
-pressure_advance = 0.065
+pressure_advance = 0.03
 min_temp: 0	
 max_temp: 260
 
