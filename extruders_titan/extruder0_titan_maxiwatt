@@ -19,9 +19,9 @@ max_extrude_cross_section: 3
 
 
 [stepper_x]
-position_endstop: -45
-position_min: -46
-position_max: 220
+position_endstop: -47
+position_min: -48
+position_max: 215
 
 #Use endstop -62 for dual heads. Printing will need to start
 #at position 17mm from standard left side, as otherwise the righ
