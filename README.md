@@ -12,5 +12,8 @@ The printer itself is upgraded/changed with a few items:
 - Filement fed directly from a pair of Sunlu filament dryers. Filement feeds over the top bar with a help of "bearing" system built from two empty spools and some support structures.
 - The roller guides readjusted to remove slack
 - The z axis endstop sensors adjusted such that the x-rail rests equally on both z-rods, i.e. the x-rail is not exposed to torque caused be different z heights on either side
-- Yet Anothet Design for using the silicone heat block socks to prevent oozing when the print head is parked. The sensor uses the pin that used to be used for filament rounout detection, so the lack of filament runout sensor is a downside of this design.
-- A microswitch installed as a bed mesh measuring probe. The probe needs to be manually moved/turned into its measuring position
+- Yet Anothet Design for using the silicone heat block socks to prevent oozing when the print head is parked.
+- A microswitch installed as a bed mesh measuring probe. The probe needs to be manually moved/turned into its measuring position.  The sensor uses the pin that used to be used for filament rounout detection, so the lack of filament runout sensor is a downside of this design.
+
+With Klipper, Input Shaping, Pressure Advance and Bed Mesh the Tenlog is now quite reliable. The max speeds are now mostly limited by the hotend melting capacity, I am not able to go much beyond 12mm3/s or 150mm/s for a 0.4 nozzle with PLA.
+
