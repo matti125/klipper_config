@@ -17,3 +17,4 @@ The printer itself is upgraded/changed with a few items:
 
 With Klipper, Input Shaping, Pressure Advance and Bed Mesh the Tenlog is now quite reliable. The max speeds are now mostly limited by the hotend melting capacity, I am not able to go much beyond 12mm3/s or 150mm/s for a 0.4 nozzle with PLA.
 
+The board on Tenlog Hands2 has an ATMega2560 chip. The file klipper/.config has the selections made with `make menuconfig`, but you do not need that file to run klipper: the `make menuconfig` will generate the file for you (in the correct place, i.e. ~/klipper/.config), so it is included here just for reference.
