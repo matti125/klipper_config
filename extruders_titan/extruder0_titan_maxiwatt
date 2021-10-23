@@ -11,7 +11,7 @@ filament_diameter: 1.750
 heater_pin: ar11
 sensor_type: EPCOS 100K B57560G104F
 sensor_pin: analog15
-pressure_advance = 0.065
+pressure_advance = 0.07
 min_temp: 0
 max_temp: 260
 max_extrude_only_distance: 200.0
